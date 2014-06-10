@@ -27,6 +27,13 @@ zipUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20
 download.file(zipUrl, destfile = "./gcddata/Dataset.zip",method = "internal", mode="wb")
 list.files("./gcddata")
 
+# get the acceleration signal files, the body acceleration signal files
+#  and the angular velocity vector file
+#total_acc_x_trainunz <- unz("./gcddata/Dataset.zip",
+#                            "UCI HAR Dataset/train/Inertial Signals\total_acc_x_train.txt")
+#total_acc_x_train <- read.table(total_acc_x_trainunz, header=FALSE)
+# ....
+
 # get training set
 
 trainingunz <- unz("./gcddata/Dataset.zip","UCI HAR Dataset/train/X_train.txt")
@@ -65,4 +72,20 @@ featurenames <- features[,2]
 
 # name the measurements dataset using featurenames
 
-names(measurements) <- featurenames
+#names(measurements) <- featurenames
+
+# 2 Extract only the measurements on the mean and standard deviation for each measurement.
+
+# find the position for the feature names that contain -mean or -std using grepl()
+#      ... note that we could have chosen to find -mean() or -std() feature names
+# put the result in submeasurementspos that will be an index for subsetting
+# put the corresponding names in submeasurementsnames
+
+#submeasurementspos <- grepl(".*-(std | mean)\\(\\).*", featurenames)
+submeasurementspos <- grepl(".*-(mean|std).*", featurenames)
+submeasurementsnames <- featurenames[submeasurementspos]
+
+# Extract only the measurements on the mean and standard deviation for each measurement based
+# on submeasurementspos .
+
+measurements <- measurements[,submeasurementspos]
