@@ -70,6 +70,15 @@ featuresunz <- unz("./gcddata/Dataset.zip","UCI HAR Dataset/features.txt")
 features <- read.table(featuresunz, header=FALSE) 
 featurenames <- features[,2]
 
+# merge training and test labels in one set
+labels <- rbind(traininglabels, testlabels)
+
+# get the activity labels
+
+activitiesunz <- unz("./gcddata/Dataset.zip","UCI HAR Dataset/activity_labels.txt")
+activities <- read.table(activitiesunz, header=FALSE) 
+activitynames <- activities[,2]
+
 # name the measurements dataset using featurenames
 
 #names(measurements) <- featurenames
@@ -81,11 +90,15 @@ featurenames <- features[,2]
 # put the result in submeasurementspos that will be an index for subsetting
 # put the corresponding names in submeasurementsnames
 
-#submeasurementspos <- grepl(".*-(std | mean)\\(\\).*", featurenames)
 submeasurementspos <- grepl(".*-(mean|std).*", featurenames)
+#submeasurementspos <- grepl(".*-(std|mean)\\(\\).*", featurenames)
 submeasurementsnames <- featurenames[submeasurementspos]
 
 # Extract only the measurements on the mean and standard deviation for each measurement based
 # on submeasurementspos .
 
 measurements <- measurements[,submeasurementspos]
+
+# 3 Use descriptive activity names to name the activities in the data set
+
+labels <- as.data.frame(lapply(labels, f <- function(x) {x <- activitynames[x] }))
