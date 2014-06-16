@@ -46,6 +46,11 @@ traininglabelsunz <- unz("./gcddata/Dataset.zip","UCI HAR Dataset/train/y_train.
 traininglabels <- read.table(traininglabelsunz, header=FALSE) 
 #close(traininglabelsunz)
 
+# get training subjects
+
+trainingsubjectsunz <- unz("./gcddata/Dataset.zip","UCI HAR Dataset/train/subject_train.txt")
+trainingsubjects <- read.table(trainingsubjectsunz, header=FALSE)
+
 # get test set
 
 testunz <- unz("./gcddata/Dataset.zip","UCI HAR Dataset/test/X_test.txt")
@@ -57,6 +62,11 @@ testset <- read.table(testunz, header=FALSE)
 testlabelsunz <- unz("./gcddata/Dataset.zip","UCI HAR Dataset/test/y_test.txt")
 testlabels <- read.table(testlabelsunz, header=FALSE) 
 #close(testlabelsunz)
+
+# get test subjects
+
+testsubjectsunz <- unz("./gcddata/Dataset.zip","UCI HAR Dataset/test/subject_test.txt")
+testsubjects <- read.table(testsubjectsunz, header=FALSE)
 
 # merge training and test sets in one set
 
@@ -71,26 +81,29 @@ features <- read.table(featuresunz, header=FALSE)
 featurenames <- features[,2]
 
 # merge training and test labels in one set
+
 labels <- rbind(traininglabels, testlabels)
 
+# merge training and test subjects in one set
+
+subjects <- rbind(trainingsubjects, testsubjects)
+
+        
 # get the activity labels
 
 activitiesunz <- unz("./gcddata/Dataset.zip","UCI HAR Dataset/activity_labels.txt")
 activities <- read.table(activitiesunz, header=FALSE) 
 activitynames <- activities[,2]
 
-# name the measurements dataset using featurenames
-
-#names(measurements) <- featurenames
 
 # 2 Extract only the measurements on the mean and standard deviation for each measurement.
 
-# find the position for the feature names that contain -mean or -std using grepl()
-#      ... note that we could have chosen to find -mean() or -std() feature names
+# find the position for the feature names that contain -mean() or -std() using grepl()
+#      ... note that we could have chosen to find -mean or -std feature names
 # put the result in submeasurementspos that will be an index for subsetting
 # put the corresponding names in submeasurementsnames
 
-submeasurementspos <- grepl(".*-(mean|std).*", featurenames)
+submeasurementspos <- grepl(".*-(mean|std)\\(\\).*", featurenames)
 #submeasurementspos <- grepl(".*-(std|mean)\\(\\).*", featurenames)
 submeasurementsnames <- featurenames[submeasurementspos]
 
@@ -99,6 +112,20 @@ submeasurementsnames <- featurenames[submeasurementspos]
 
 measurements <- measurements[,submeasurementspos]
 
+
 # 3 Use descriptive activity names to name the activities in the data set
 
 labels <- as.data.frame(lapply(labels, f <- function(x) {x <- activitynames[x] }))
+names(labels) <- c("activity")
+
+# 4 Appropriately label the data set with descriptive variable names. 
+
+names(measurements) <- submeasurementsnames
+names(labels) <- c("activity")
+names(subjects) <- c("subject")
+
+# here's the first tidy dataset ...
+
+tidymeasurements <- cbind(subjects,labels, measurements)
+
+ 
