@@ -17,6 +17,8 @@
 
 # create a directory where we will download the zip file
 
+setwd("C:/Users/P06226/")
+
 if (!file.exists("gcddata")) {
         dir.create("gcddata")
 }
@@ -24,7 +26,9 @@ if (!file.exists("gcddata")) {
 # download the zip file ...
 
 zipUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
-download.file(zipUrl, destfile = "./gcddata/Dataset.zip",method = "internal", mode="wb")
+if (!file.exists("./gcddata/Dataset.zip")) {
+        download.file(zipUrl, destfile = "./gcddata/Dataset.zip",method = "internal", mode="wb")
+}
 list.files("./gcddata")
 
 # get the acceleration signal files, the body acceleration signal files
@@ -124,8 +128,40 @@ names(measurements) <- submeasurementsnames
 names(labels) <- c("activity")
 names(subjects) <- c("subject")
 
-# here's the first tidy dataset ...
+# here's the first dataset ...
 
-tidymeasurements <- cbind(subjects,labels, measurements)
+measurements <- cbind(subjects,labels, measurements)
 
- 
+
+# 5 Create a second, independent tidy data set with the average of each variable for each activity 
+#   and each subject. 
+
+# melt the measurements
+
+library(reshape2)
+mmeasurements <- melt(measurements, id=c("subject", "activity"))
+
+# cast the molten data
+
+#cmeasurements <- acast(mmeasurements, subject ~ activity ~ variable, mean)
+
+cmeasurements <- acast(mmeasurements, subject + activity ~ variable , mean)
+
+#get the subects from the row.names  of the cast data
+
+csubjects <- sub("([0-9]*)\\_.*","\\1",row.names(cmeasurements))
+
+#get the activities from the row.names  of the cast data
+
+cactivities <- sub("([0-9]*)\\_(.*)","\\2",row.names(cmeasurements))
+
+# get the column names of the cast data and prefix them with 'avg-'
+
+ccolumnnames <- attr(cmeasurements,"dimnames")[[2]]
+ccolumnnames <- sub("(.*)","avg\\-\\1",ccolumnnames)
+
+# here's the tidy data set ...
+
+tidymeasurements <- as.data.frame(cbind(csubjects,cactivities,cmeasurements))
+row.names(tidymeasurements) <- NULL
+names(tidymeasurements) <- c("subject","activity",ccolumnnames)
