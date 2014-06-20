@@ -144,16 +144,18 @@ names(measurements)[2] <- "activity"
 
 library(plyr)
 
-tdm <- ddply(measurements,.(activity,subject),numcolwise(mean),.drop=TRUE)
+tidydata <- ddply(measurements,.(activity,subject),numcolwise(mean),.drop=TRUE)
 
-names(tdm)[3:length(names(tdm))] <- sub("(.*)","avg\\1",names(tdm)[3:length(names(tdm))])
+names(tidydata)[3:length(names(tidydata))] <- 
+        sub("(.*)","avg\\1",names(tidydata)[3:length(names(tidydata))])
 
 
 # write tdm to a file using write.table
 
-write.table(tdm, file= "./gcddata/tidymeasurements.txt", row.names = FALSE)
+write.table(tidydata, file= "./gcddata/tidydata.txt", row.names = FALSE)
 
 list.files("./gcddata")
 
 # read the file back using read.table do not forget to user "header = TRUE"
-#tdm2 <- read.table("./gcddata/tidymeasurements.txt", header = TRUE)
+#tdm2 <- read.table("./gcddata/tidydata.txt", header = TRUE)
+
