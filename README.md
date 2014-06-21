@@ -11,20 +11,20 @@ This repo will contain the script and readme that correspond to the project int 
    that were loaded for the script:
    
    > sessionInfo()
-
+ 
       R version 3.0.3 (2014-03-06)
       Platform: x86_64-w64-mingw32/x64 (64-bit)
-
+ 
       locale:
       [1] LC_COLLATE=French_Belgium.1252  LC_CTYPE=French_Belgium.1252    LC_MONETARY=French_Belgium.1252
       [4] LC_NUMERIC=C                    LC_TIME=French_Belgium.1252    
-
+ 
       attached base packages:
       [1] stats     graphics  grDevices utils     datasets  methods   base     
-
+ 
       other attached packages:
       [1] plyr_1.8.1   reshape2_1.4
-
+ 
       loaded via a namespace (and not attached):
       [1] Rcpp_0.11.1   stringr_0.6.2 tools_3.0.3 
 
